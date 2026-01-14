@@ -3,6 +3,9 @@ name: Process Component Config
 on:
   workflow_dispatch:
     inputs:
+      execution_id:
+        description: "Execution identifier"
+        required: true
       repository:
         description: "Target repository name"
         required: true
