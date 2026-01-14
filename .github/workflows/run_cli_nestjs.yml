@@ -3,10 +3,13 @@ name: Process Component Config
 on:
   workflow_dispatch:
     inputs:
-      components:
-        description: 'JSON string containing component configurations'
+      repository:
+        description: "Target repository name"
         required: true
-        default: '{}'
+      components:
+        description: "JSON string containing component configurations"
+        required: true
+        default: "{}"
 
 jobs:
   debug-params:
@@ -20,8 +23,12 @@ jobs:
       - name: Parse and Print Specific Values
         run: |
           # We use 'jq' to extract data from the string
+          REPOSITORY='${{ github.event.inputs.repository }}'
           COMPONENTS='${{ github.event.inputs.components }}'
-          
+
+          REPOSITORY_NAME=$(echo $REPOSITORY)
+          echo "Repository Name: $REPOSITORY_NAME"
+
           REST_STATUS=$(echo $COMPONENTS | jq -r '.rest.enabled')
           GQL_STATUS=$(echo $COMPONENTS | jq -r '.graphql.enabled')
           PG_HEALTH=$(echo $COMPONENTS | jq -r '.postgres.healthCheck')
