@@ -6,13 +6,16 @@ on:
       execution_id:
         description: "Execution identifier"
         required: true
+        type: string
       repository_name:
         description: "Target repository name"
         required: true
+        type: string
       components:
         description: "JSON string containing component configurations"
         required: true
         default: "{}"
+        type: string
 
 jobs:
   debug-params:
