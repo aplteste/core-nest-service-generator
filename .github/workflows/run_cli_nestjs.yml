@@ -3,10 +3,10 @@ name: Run CLI NestJS
 on:
   workflow_dispatch:
     inputs:
-      trigger_event:
-        description: "Backstage trigger event name"
-        required: true
-        type: string
+      # trigger_event:
+      #   description: "Backstage trigger event name"
+      #   required: true
+      #   type: string
       execution_id:
         description: "Execution identifier"
         required: true
@@ -21,21 +21,10 @@ on:
         default: "{}"
         type: string
 
+run-name: ${{ github.event.inputs.execution_id }}
+
 jobs:
-  backstage-tag:
-    name: tag_${{ github.event.inputs.trigger_event }}_${{ github.event.inputs.execution_id }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-
-    steps:
-      - name: Correlation marker
-        run: |
-          echo "trigger_event=${{ github.event.inputs.trigger_event }}"
-          echo "execution_id=${{ github.event.inputs.execution_id }}"
-          echo "repository_name=${{ github.event.inputs.repository_name }}"
-
-  debug-params:
-    needs: backstage-tag
+  run-cli:
     name: Run CLI
     runs-on: ubuntu-latest
     timeout-minutes: 1
