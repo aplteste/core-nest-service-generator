@@ -3,10 +3,6 @@ name: Run CLI NestJS
 on:
   workflow_dispatch:
     inputs:
-      # trigger_event:
-      #   description: "Backstage trigger event name"
-      #   required: true
-      #   type: string
       execution_id:
         description: "Execution identifier"
         required: true
