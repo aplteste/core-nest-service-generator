@@ -1,4 +1,4 @@
-name: Run CLI NestJS - ${{ inputs.execution_id }}
+name: Run CLI NestJS - ${{ github.event.inputs.execution_id }}
 
 on:
   workflow_dispatch:
