@@ -3,6 +3,10 @@ name: Run CLI NestJS
 on:
   workflow_dispatch:
     inputs:
+      trigger_event:
+        description: "Backstage trigger event name"
+        required: true
+        type: string
       execution_id:
         description: "Execution identifier"
         required: true
@@ -18,15 +22,29 @@ on:
         type: string
 
 jobs:
-  debug-params:
-    name: Run CLI - ${{ github.event.inputs.execution_id }}
+  backstage-tag:
+    name: tag_${{ github.event.inputs.trigger_event }}_${{ github.event.inputs.execution_id }}
     runs-on: ubuntu-latest
     timeout-minutes: 1
+
+    steps:
+      - name: Correlation marker
+        run: |
+          echo "trigger_event=${{ github.event.inputs.trigger_event }}"
+          echo "execution_id=${{ github.event.inputs.execution_id }}"
+          echo "repository_name=${{ github.event.inputs.repository_name }}"
+
+  debug-params:
+    needs: backstage-tag
+    name: Run CLI
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+
     steps:
       - name: Print Raw Input
         run: |
           echo "Received raw JSON:"
-          echo "${{ github.event.inputs.components }}"
+          echo '${{ github.event.inputs.components }}'
 
       - name: Parse and Print Specific Values
         run: |
@@ -38,10 +56,10 @@ jobs:
             echo "Repository Name: $REPOSITORY_NAME"
             echo "Execution ID: $EXECUTION_ID"
 
-            REST_STATUS=$(echo $COMPONENTS | jq -r ".rest.enabled")
-            GQL_STATUS=$(echo $COMPONENTS | jq -r ".graphql.enabled")
-            PG_HEALTH=$(echo $COMPONENTS | jq -r ".postgres.healthCheck")
-            REDIS_HEALTH=$(echo $COMPONENTS | jq -r ".redis.healthCheck")
+            REST_STATUS=$(echo "$COMPONENTS" | jq -r ".rest.enabled")
+            GQL_STATUS=$(echo "$COMPONENTS" | jq -r ".graphql.enabled")
+            PG_HEALTH=$(echo "$COMPONENTS" | jq -r ".postgres.healthCheck")
+            REDIS_HEALTH=$(echo "$COMPONENTS" | jq -r ".redis.healthCheck")
 
             echo "---------------------------------------"
             echo "Rest Enabled: $REST_STATUS"
