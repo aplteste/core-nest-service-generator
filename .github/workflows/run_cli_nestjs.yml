@@ -26,7 +26,7 @@ jobs:
 
       - name: Parse and Print Specific Values
         run: |
-          timeout 30s bash -c '
+          timeout 60s bash -c '
             REPOSITORY_NAME="${{ github.event.inputs.repository_name }}"
             COMPONENTS="${{ github.event.inputs.components }}"
 
