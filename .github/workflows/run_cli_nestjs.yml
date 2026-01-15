@@ -17,6 +17,7 @@ on:
 jobs:
   debug-params:
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     steps:
       - name: Print Raw Input
         run: |
@@ -25,24 +26,24 @@ jobs:
 
       - name: Parse and Print Specific Values
         run: |
-          # We use 'jq' to extract data from the string
-          REPOSITORY_NAME='${{ github.event.inputs.repository_name }}'
-          COMPONENTS='${{ github.event.inputs.components }}'
+          timeout 30s bash -c '
+            REPOSITORY_NAME="${{ github.event.inputs.repository_name }}"
+            COMPONENTS="${{ github.event.inputs.components }}"
 
-          REPOSITORY_NAME=$(echo $REPOSITORY_NAME)
-          echo "Repository Name: $REPOSITORY_NAME"
+            echo "Repository Name: $REPOSITORY_NAME"
 
-          REST_STATUS=$(echo $COMPONENTS | jq -r '.rest.enabled')
-          GQL_STATUS=$(echo $COMPONENTS | jq -r '.graphql.enabled')
-          PG_HEALTH=$(echo $COMPONENTS | jq -r '.postgres.healthCheck')
-          REDIS_HEALTH=$(echo $COMPONENTS | jq -r '.redis.healthCheck')
+            REST_STATUS=$(echo $COMPONENTS | jq -r ".rest.enabled")
+            GQL_STATUS=$(echo $COMPONENTS | jq -r ".graphql.enabled")
+            PG_HEALTH=$(echo $COMPONENTS | jq -r ".postgres.healthCheck")
+            REDIS_HEALTH=$(echo $COMPONENTS | jq -r ".redis.healthCheck")
 
-          echo "---------------------------------------"
-          echo "Rest Enabled: $REST_STATUS"
-          echo "GraphQL Enabled: $GQL_STATUS"
-          echo "Postgres HealthCheck: $PG_HEALTH"
-          echo "Redis HealthCheck: $REDIS_HEALTH"
-          echo "---------------------------------------"
+            echo "---------------------------------------"
+            echo "Rest Enabled: $REST_STATUS"
+            echo "GraphQL Enabled: $GQL_STATUS"
+            echo "Postgres HealthCheck: $PG_HEALTH"
+            echo "Redis HealthCheck: $REDIS_HEALTH"
+            echo "---------------------------------------"
+          '
 
       - name: Conditional Step Example
         if: ${{ fromJson(github.event.inputs.components).graphql.enabled == true }}
